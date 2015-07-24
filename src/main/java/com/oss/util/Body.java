@@ -1,4 +1,4 @@
-package com.oss;
+package com.oss.util;
 
 public class Body {
 	private String type;

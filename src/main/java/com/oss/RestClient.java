@@ -1,4 +1,5 @@
 package com.oss;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -24,22 +25,22 @@ import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RestClient {
+import com.oss.util.Body;
+import com.oss.util.RequestMethod;
+
+public class RestClient extends BaseClient{
 	private static final Logger LOG = LoggerFactory.getLogger(RestClient.class);
 	private static final RequestConfig REQUEST_CONFIG = RequestConfig.custom().setConnectTimeout(10000).build();
 	private static final String UTF_8 = "UTF-8";
 
 	private final ArrayList<NameValuePair> headers;
 	private final ArrayList<NameValuePair> params;
-	private final String url;
+
 
 	private Body body;
-	private int responseCode;
-	private String msg;
-	private String response;
 
 	public RestClient(final String url) {
-		this.url = url;
+		super(url);
 		this.headers = new ArrayList<NameValuePair>();
 		this.params = new ArrayList<NameValuePair>();
 	}
@@ -51,6 +52,7 @@ public class RestClient {
 	public void addParam(final String name, final String value) {
 		this.params.add(new BasicNameValuePair(name, value));
 	}
+
 	public void execute(final RequestMethod method) throws Exception {
 		switch (method) {
 		case GET: {
@@ -79,7 +81,6 @@ public class RestClient {
 		default:
 			break;
 		}
-
 	}
 
 	public String getUrl() {
@@ -104,22 +105,6 @@ public class RestClient {
 			paramsBuilder.replace(0, 1, "?");
 		}
 		return paramsBuilder.toString();
-	}
-
-	public String getMsg() {
-		return this.msg;
-	}
-
-	public String getResponse () throws UnsupportedEncodingException {
-		return new String(this.response.getBytes(RestClient.UTF_8), RestClient.UTF_8);
-	}
-
-	public int getResponseCode() {
-		return this.responseCode;
-	}
-
-	public boolean executeSuccess() {
-		return this.responseCode == 200;
 	}
 
 	public void setBody(final Body body) {
@@ -152,7 +137,7 @@ public class RestClient {
 
 			if (entity != null) {
 				try(InputStream is = entity.getContent()) {
-					this.response = Util.stream2String(is);
+					this.response = RestClient.stream2String(is);
 					/* Closing the input stream will trigger connection release */
 					is.close();
 				}
@@ -164,5 +149,18 @@ public class RestClient {
 		} catch (final IOException e) {
 			RestClient.LOG.info("rest client IOException", e);
 		}
+	}
+
+	public static String stream2String(final InputStream is) throws IOException {
+		String tmp;
+		try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			for(int i=is.read(); i != -1; i = is.read()) {
+				os.write(i);
+			}
+			tmp = os.toString();
+			os.close();
+		}
+		is.close();
+		return tmp;
 	}
 }

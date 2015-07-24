@@ -1,6 +1,9 @@
-package com.oss;
+package com.oss.util;
 
-public class RequestInfo {
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
+public class ResponseInfo {
 	private String method;
 	private String body;
 	private String type;

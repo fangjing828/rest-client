@@ -1,4 +1,4 @@
-package com.oss;
+package com.oss.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -8,6 +8,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.oss.util.Body;
+import com.oss.util.Random;
+import com.oss.util.RequestInfo;
+import com.oss.util.RequestMethod;
+import com.oss.util.Server;
 import com.sun.net.httpserver.HttpServer;
 public class RestClientTest {
 	private HttpServer server;

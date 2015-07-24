@@ -1,4 +1,4 @@
-package com.oss;
+package com.oss.util;
 /**
  * HTTP Request Method.
  * Support {@code POST},{@code GET},{@code PUT}, {@code DELETE}
